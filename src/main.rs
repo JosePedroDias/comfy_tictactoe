@@ -23,7 +23,12 @@ static STATE: Lazy<AtomicRefCell<State>> = Lazy::new(|| {
 
 simple_game!("tictactoe", setup, update);
 
-fn setup(_c: &mut EngineContext) {
+fn setup(c: &mut EngineContext) {
+    c.load_fonts_from_bytes(&[(
+        "uni",
+        include_bytes!("../assets/univers-light-normal.ttf"),
+    )]);
+    
     let mut cam = main_camera_mut();
     cam.zoom /= 4.0;
 }
@@ -69,7 +74,7 @@ fn update(_c: &mut EngineContext) {
             if state.board.spaces[i] == Marker::NA {
                 // lets add another marker to the board...
                 state.board.spaces[i] = state.board.current_player;
-                println!("{}", state.board);
+                // println!("{}", state.board);
                 
                 // has anyone won?
                 if let Some(winner) = who_won(&state.board) {
@@ -118,6 +123,19 @@ fn update(_c: &mut EngineContext) {
         } else {
             label = format!("{} won!", state.winner);
         };
-        draw_text(label.as_str(), vec2(0.0, 0.0), WHITE, TextAlign::Center);
+        
+        //draw_text(label.as_str(), vec2(0.0, 0.0), WHITE, TextAlign::Center);
+        draw_text_ex(
+            label.as_str(),
+            vec2(0.0, 0.0),
+            TextAlign::Center,
+            TextParams {
+                color: WHITE,
+                font: egui::FontId::new(
+                    64.0,
+                    egui::FontFamily::Name("uni".into()),
+                ),
+            ..Default::default()
+        });
     }
 }
